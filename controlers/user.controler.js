@@ -1,10 +1,12 @@
 import { User } from "../models/user.model.js";
-import  bcrypt  from "bcrypt";
+import bcrypt from "bcrypt";
 
 // New User Registration
 export const register = async (req, res, next) => {
   try {
-    // console.log(req);
+    if (!req.body.userName) {
+      return res.status(400).send("Username is required.");
+    }
 
     const hash = bcrypt.hashSync(req.body.password, 5);
     const newUser = new User({
@@ -12,13 +14,16 @@ export const register = async (req, res, next) => {
       password: hash,
     });
 
-    await newUser.save();
+    const savedUser = await newUser.save();
     res
       .status(201)
-      .send("User has been created.")
-      .json({ newRegisteredUser: newuser });
+      .json({
+        message: "User has been created.",
+        newRegisteredUser: savedUser,
+      });
   } catch (err) {
-    next(err);
+    console.error(err);
+    next(err.message || err);
   }
 };
 

@@ -24,7 +24,7 @@ const connect = async () => {
   }
 };
 // app.use((req,res,next) =>{
-//   console.log(req.params.id);
+//   console.log(req.body);
 //   next()
 // })
 app.use(cors({ origin: "*", credentials: true }));

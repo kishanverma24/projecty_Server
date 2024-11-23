@@ -4,9 +4,9 @@ import { verifyToken } from "../middleware/jwt.js";
 
 const router = express.Router();
 //register user and  delete and get user by id ---> "/api/user"
-router.post("/register", register);
-router.delete("/:userid", verifyToken, deleteUserByUserId);
-router.put("/:userid", verifyToken, updateUserByUserId );
-router.get("/:userid", getUserByUserId);
+router.post("/register", register); //register
+router.delete("/:userid", verifyToken, deleteUserByUserId); // delete
+router.put("/:userid", verifyToken, updateUserByUserId ); // update
+router.get("/:userid", getUserByUserId); // get user
 
 export default router;

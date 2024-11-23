@@ -5,9 +5,10 @@ const userSchema = new Schema(
   {
     userName: {
       type: String,
-      required: true,
+      required: [true, "Username is required"],
       unique: true,
     },
+
     fullName: {
       type: String,
       required: true,
@@ -17,7 +18,7 @@ const userSchema = new Schema(
       required: true,
       unique: true,
     },
-    linkedin: {
+    linkedIn: {
       type: String,
       required: true,
       unique: true,

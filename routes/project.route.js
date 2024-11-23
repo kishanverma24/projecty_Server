@@ -12,21 +12,21 @@ import { verifyToken } from "../middleware/jwt.js";
 const router = express.Router();
 // Crud on projects ---> "/api/project"
 // Route to create a new project
-router.post("/", verifyToken, createProject);
+router.post("/", verifyToken, createProject); // create project
 
 // Route to get all projects
-router.get("/projects", getAllProjects);
+router.get("/projects", getAllProjects); // get all project
 
 // Route to get a specific project by projectID
-router.get("/:projectid", getProjectByProjectId);
+router.get("/:projectid", getProjectByProjectId); // get project by project id
 
 // Route to get a specific project by projectTitle
-router.get("/title/:title", getProjectByProjectTitle);
+router.get("/title/:title", getProjectByProjectTitle); // get project by title
 
 // Route to update a specific project by projectID
-router.put("/:projectid", verifyToken, updateProjectByProjectId);
+router.put("/:projectid", verifyToken, updateProjectByProjectId); // update project by project id
 
 // Route to delete a specific project by projectID
-router.delete("/:projectid", verifyToken, deleteProjectById);
+router.delete("/:projectid", verifyToken, deleteProjectById); // delete project by project id
 
 export default router;

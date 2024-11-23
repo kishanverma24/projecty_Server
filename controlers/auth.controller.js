@@ -24,7 +24,7 @@ import createError from "../utils/createError.js";
 // User Login
 export const login = async (req, res, next) => {
   try {
-    const user = await User.findOne({ userName: req.body.username });
+    const user = await User.findOne({ userName: req.body.userName });
 
     if (!user) return next(createError(404, "User not found!"));
 
