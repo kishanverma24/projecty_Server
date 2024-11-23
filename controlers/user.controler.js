@@ -4,29 +4,59 @@ import bcrypt from "bcrypt";
 // New User Registration
 export const register = async (req, res, next) => {
   try {
-    if (!req.body.userName) {
-      return res.status(400).send("Username is required.");
+    console.log("Register Request Body:", req.body);
+
+    // Validate required fields
+    if (
+      !req.body.userName ||
+      !req.body.fullName ||
+      !req.body.email ||
+      !req.body.password
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required.",
+      });
     }
 
-    const hash = bcrypt.hashSync(req.body.password, 5);
+    // Check if the username or email already exists
+    const existingUser = await User.findOne({
+      $or: [{ userName: req.body.userName }, { email: req.body.email }],
+    });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "Username or email is already in use.",
+      });
+    }
+
+    // Hash the password
+    const hash = await bcrypt.hash(req.body.password, 5);
+
+    // Create and save the new user
     const newUser = new User({
       ...req.body,
       password: hash,
     });
-
     const savedUser = await newUser.save();
-    res
-      .status(201)
-      .json({
-        message: "User has been created.",
-        newRegisteredUser: savedUser,
-      });
+
+    // Respond with success
+    res.status(201).json({
+      success: true,
+      message: "User has been created.",
+      newRegisteredUser: savedUser,
+    });
   } catch (err) {
-    console.error(err);
-    next(err.message || err);
+    console.error("Error during registration:", err);
+
+    // Respond with error
+    res.status(500).json({
+      success: false,
+      message: "An error occurred during registration.",
+      error: err.message, // Useful for debugging
+    });
   }
 };
-
 // Get a single user by ID
 export const getUserByUserId = async (req, res) => {
   try {

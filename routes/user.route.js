@@ -7,6 +7,6 @@ const router = express.Router();
 router.post("/register", register); //register
 router.delete("/:userid", verifyToken, deleteUserByUserId); // delete
 router.put("/:userid", verifyToken, updateUserByUserId ); // update
-router.get("/:userid", getUserByUserId); // get user
+router.get("/:userid", getUserByUserId); // get user by id
 
 export default router;

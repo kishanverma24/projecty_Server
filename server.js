@@ -27,7 +27,14 @@ const connect = async () => {
 //   console.log(req.body);
 //   next()
 // })
-app.use(cors({ origin: "*", credentials: true }));
+// app.use(cors({ origin: "http://localhost:5173/", credentials: true }));
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN,
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization", "token"],
+};
+app.use(cors(corsOptions));
+
 // login, logout, register of user
 app.use("/api/auth", authRoute);
 // deleting and getting user by id

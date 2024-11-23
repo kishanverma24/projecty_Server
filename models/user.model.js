@@ -11,25 +11,24 @@ const userSchema = new Schema(
 
     fullName: {
       type: String,
-      required: true,
+      required: [true, "FullName is required"],
     },
     email: {
       type: String,
-      required: true,
+      required: [true, "Email is required"],
       unique: true,
     },
     linkedIn: {
       type: String,
-      required: true,
-      unique: true,
+      default: "",
     },
     password: {
       type: String,
-      required: true,
+      required: [true, "Password is required"],
     },
-    phone: {
+    resume: {
       type: String,
-      required: false,
+      default: "",
     },
   },
   {
