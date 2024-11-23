@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const userSchema = new Schema(
   {
-    username: {
+    userName: {
       type: String,
       required: true,
       unique: true,
@@ -36,4 +36,5 @@ const userSchema = new Schema(
   }
 );
 
-export default mongoose.model("User", userSchema);
+// export default mongoose.model("User", userSchema);
+export const User = mongoose.model("User", userSchema);

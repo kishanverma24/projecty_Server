@@ -1,11 +1,16 @@
 import { Project } from "../models/project.model.js";
-
+import { User } from "../models/user.model.js";
 // CREATE a new project
 export const createProject = async (req, res) => {
   try {
-    const project = new Project(req.body);
+    const user = await User.findById(req.userId);
+
+    if (!user) return next(createError(404, "User not found!"));
+    const project = new Project({ ...req.body, userName: user.userName });
     await project.save();
-    res.status(201).json({ message: "Project created successfully", project });
+    res
+      .status(201)
+      .json({ message: "Project created successfully", newProject: project });
   } catch (error) {
     res
       .status(400)
@@ -13,11 +18,11 @@ export const createProject = async (req, res) => {
   }
 };
 
-// READ all projects
+// GET All Projects
 export const getAllProjects = async (req, res) => {
   try {
     const projects = await Project.find();
-    res.status(200).json(projects);
+    res.status(200).json({ projects: projects });
   } catch (error) {
     res
       .status(500)
@@ -25,11 +30,11 @@ export const getAllProjects = async (req, res) => {
   }
 };
 
-// READ a single project by ID
-export const getProjectById = async (req, res) => {
+// GET Single Project by ProjectID
+export const getProjectByProjectId = async (req, res) => {
   try {
-    const { id } = req.params;
-    const project = await Project.findById(id);
+    const { projectid } = req.params;
+    const project = await Project.findById(projectid);
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }
@@ -40,15 +45,40 @@ export const getProjectById = async (req, res) => {
       .json({ message: "Failed to fetch project", error: error.message });
   }
 };
-
-// UPDATE a project by ID
-export const updateProjectById = async (req, res) => {
+// GET Single Project by ProjectTitle
+export const getProjectByProjectTitle = async (req, res) => {
   try {
-    const { id } = req.params;
-    const updatedProject = await Project.findByIdAndUpdate(id, req.body, {
-      new: true, 
-      runValidators: true, 
-    });
+    const { title } = req.params;
+    const searchedProject = await Project.find({ title: title });
+    if (!searchedProject) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+    res.status(200).json(searchedProject);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to fetch project", error: error.message });
+  }
+};
+
+// UPDATE Project by ProjectID
+export const updateProjectByProjectId = async (req, res) => {
+  try {
+    const { projectid } = req.params;
+    const user = await User.findById(req.userId);
+    const project = await Project.findById(projectid);
+
+    if (!user) return next(createError(404, "User not found!"));
+    if (!(user.userName == project.userName))
+      return next(createError(404, "Not authenticated to update!"));
+    const updatedProject = await Project.findByIdAndUpdate(
+      projectid,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
     if (!updatedProject) {
       return res.status(404).json({ message: "Project not found" });
     }
@@ -62,11 +92,17 @@ export const updateProjectById = async (req, res) => {
   }
 };
 
-// DELETE a project by ID
+// DELETE Project by ProjectID
 export const deleteProjectById = async (req, res) => {
   try {
-    const { id } = req.params;
-    const deletedProject = await Project.findByIdAndDelete(id);
+    const { projectid } = req.params;
+    const user = await User.findById(req.userId);
+    const project = await Project.findById(projectid);
+
+    if (!user) return next(createError(404, "User not found!"));
+    if (!(user.userName == project.userName))
+      return next(createError(404, "Not authenticated to delete!"));
+    const deletedProject = await Project.findByIdAndDelete(projectid);
     if (!deletedProject) {
       return res.status(404).json({ message: "Project not found" });
     }
