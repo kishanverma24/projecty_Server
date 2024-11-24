@@ -31,23 +31,13 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// app.use((req, res, next) => {
-//   console.log(`${req.method} ${req.url}`);
-//   next();
-// });
-// app.use((req, res, next) => {
-//   console.log(req.params);
-//   console.log(req.body);
-//   next();
-// });
-
 // login, logout, register of user
 app.use("/api/auth", authRoute);
 // deleting and getting user by id
 app.use("/api/user", userRoute);
 // crud on project
 app.use("/api/project", projectRoute);
-app.listen(8000, () => {
+app.listen(process.env.PORT, () => {
   connect();
   console.log("Backend server is running!");
 });
