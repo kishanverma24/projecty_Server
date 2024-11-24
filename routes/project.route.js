@@ -6,6 +6,7 @@ import {
   getProjectByProjectId,
   getProjectByProjectTitle,
   updateProjectByProjectId,
+  getAllProjectsOfUsername,
 } from "../controlers/project.controler.js";
 import { verifyToken } from "../middleware/jwt.js";
 
@@ -16,6 +17,9 @@ router.post("/", verifyToken, createProject); // create project
 
 // Route to get all projects
 router.get("/projects", getAllProjects); // get all project
+
+// Route to get all project of given username
+router.get("/projects/profileprojects/:username", getAllProjectsOfUsername); // get all project
 
 // Route to get a specific project by projectID
 router.get("/:projectid", getProjectByProjectId); // get project by project id

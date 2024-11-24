@@ -57,16 +57,19 @@ export const register = async (req, res, next) => {
     });
   }
 };
-// Get a single user by ID
-export const getUserByUserId = async (req, res) => {
+// Get a single user by userName
+export const getUserByUserName = async (req, res) => {
   try {
-    const { userid } = req.params;
-    const user = await User.findById(userid);
+    const { username } = req.params;
+    const user = await User.findOne({ userName: username });
     if (!user) {
+      console.log("User not found:", username);
       return res.status(404).json({ message: "User not found" });
     }
-    res.status(200).json({ searchedUser: user });
+
+    res.status(200).json({ success: true, searchedUser: user });
   } catch (error) {
+    console.log("Error fetching user:", error.message);
     res
       .status(500)
       .json({ message: "Failed to fetch user", error: error.message });

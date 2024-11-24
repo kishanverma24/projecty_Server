@@ -29,6 +29,44 @@ export const getAllProjects = async (req, res) => {
       .json({ message: "Failed to fetch projects", error: error.message });
   }
 };
+// GET All Projects of usernaname Profile
+export const getAllProjectsOfUsername = async (req, res) => {
+  try {
+    const { username } = req.params;
+    console.log(username);
+
+    // Validate username parameter
+    if (!username) {
+      return res.status(400).json({
+        success: false,
+        message: "Username parameter is required",
+      });
+    }
+
+    // Fetch projects from the database
+    const projects = await Project.find({ userName: username });
+
+    // Check if projects are found
+    if (projects.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: `No projects found for username: ${username}`,
+      });
+    }
+
+    // Return the projects
+    res.status(200).json({
+      success: true,
+      projects,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching projects",
+      error: error.message,
+    });
+  }
+};
 
 // GET Single Project by ProjectID
 export const getProjectByProjectId = async (req, res) => {

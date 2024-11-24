@@ -10,7 +10,7 @@ import cookieParser from "cookie-parser";
 const app = express();
 dotenv.config();
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 mongoose.set("strictQuery", true);
@@ -23,17 +23,23 @@ const connect = async () => {
     console.log(error);
   }
 };
-// app.use((req,res,next) =>{
-//   console.log(req.body);
-//   next()
-// })
-// app.use(cors({ origin: "http://localhost:5173/", credentials: true }));
+
 const corsOptions = {
   origin: process.env.CORS_ORIGIN,
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization", "token"],
 };
 app.use(cors(corsOptions));
+
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+// app.use((req, res, next) => {
+//   // console.log(req.params);
+//   console.log(req.body);
+//   next();
+// });
 
 // login, logout, register of user
 app.use("/api/auth", authRoute);
