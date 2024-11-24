@@ -33,7 +33,7 @@ export const getAllProjects = async (req, res) => {
 export const getAllProjectsOfUsername = async (req, res) => {
   try {
     const { username } = req.params;
-    console.log(username);
+    // console.log(username);
 
     // Validate username parameter
     if (!username) {

@@ -31,12 +31,12 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  next();
-});
 // app.use((req, res, next) => {
-//   // console.log(req.params);
+//   console.log(`${req.method} ${req.url}`);
+//   next();
+// });
+// app.use((req, res, next) => {
+//   console.log(req.params);
 //   console.log(req.body);
 //   next();
 // });

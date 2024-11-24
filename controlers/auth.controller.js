@@ -5,6 +5,8 @@ import jwt from "jsonwebtoken";
 // User Login
 export const login = async (req, res, next) => {
   try {
+    // console.log(req.body);
+
     const user = await User.findOne({ userName: req.body.userName });
 
     if (!user) return res.json({ success: false, message: "User not found!" });
@@ -39,7 +41,8 @@ export const login = async (req, res, next) => {
 
 // User Logout
 export const logout = async (req, res) => {
-  
+  // console.log(req.method);
+
   res
     .clearCookie("accessToken", {
       sameSite: "none",
