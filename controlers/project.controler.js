@@ -35,7 +35,6 @@ export const getAllProjectsOfUsername = async (req, res) => {
     const { username } = req.params;
     // console.log(username);
 
-    // Validate username parameter
     if (!username) {
       return res.status(400).json({
         success: false,

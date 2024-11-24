@@ -4,7 +4,6 @@ import bcrypt from "bcrypt";
 // New User Registration
 export const register = async (req, res, next) => {
   try {
-    // console.log("Register Request Body:", req.body);
 
     // Validate required fields
     if (
@@ -63,13 +62,11 @@ export const getUserByUserName = async (req, res) => {
     const { username } = req.params;
     const user = await User.findOne({ userName: username });
     if (!user) {
-      // console.log("User not found:", username);
       return res.status(404).json({ message: "User not found" });
     }
 
     res.status(200).json({ success: true, searchedUser: user });
   } catch (error) {
-    // console.log("Error fetching user:", error.message);
     res
       .status(500)
       .json({ message: "Failed to fetch user", error: error.message });
