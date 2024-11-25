@@ -6,7 +6,7 @@ import userRoute from "./routes/user.route.js";
 import authRoute from "./routes/auth.route.js";
 import projectRoute from "./routes/project.route.js";
 import cookieParser from "cookie-parser";
-
+// const { MongoClient, ServerApiVersion } = require('mongodb');
 // Load environment variables
 dotenv.config();
 
@@ -37,16 +37,40 @@ app.options("*", (req, res) => {
   res.sendStatus(200); // Indicate successful preflight handling
 });
 
-// MongoDB connection
-mongoose.set("strictQuery", true);
-const connect = async () => {
+// // MongoDB connection
+// mongoose.set("strictQuery", true);
+// const connect = async () => {
+//   try {
+//     await mongoose.connect(process.env.MONGODB_URl);
+//     console.log("Connected to MongoDB!");
+//   } catch (error) {
+//     console.error("Error connecting to MongoDB:", error);
+//   }
+// };
+const uri =
+  "mongodb+srv://mrkishan9151:<db_password>@cluster0.q00hg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const client = new mongoose(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
+});
+async function run() {
   try {
-    await mongoose.connect(process.env.MONGODB_URl);
-    console.log("Connected to MongoDB!");
-  } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
   }
-};
+}
+run().catch(console.dir);
 
 // Routes
 app.use("/api/auth", authRoute); // Login, logout, register of user
