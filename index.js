@@ -38,14 +38,14 @@ app.options("*", (req, res) => {
 });
 
 // Hardcoded MongoDB connection URI
-const uri =
-  "mongodb+srv://mrkishan9151:<your_actual_password>@cluster0.q00hg.mongodb.net/projecty?retryWrites=true&w=majority";
+// const uri =
+//   "mongodb+srv://mrkishan9151:<your_actual_password>@cluster0.q00hg.mongodb.net/projecty?retryWrites=true&w=majority";
 
 // MongoDB connection using Mongoose
-mongoose.set("strictQuery", true);
+// mongoose.set("strictQuery", true);
 const connect = async () => {
   try {
-    await mongoose.connect(uri);
+    await mongoose.connect(process.env.MONGODB_URL);
     console.log("Connected to MongoDB!");
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
