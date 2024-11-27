@@ -44,9 +44,12 @@ export const login = async (req, res, next) => {
     );
 
     const { password, ...currentuser } = user._doc;
+
     res
       .cookie("accessToken", token, {
+        maxAge: 3600000,
         httpOnly: true,
+        sameSite: "Strict",
       })
       .status(200)
       .json({ success: true, user: currentuser });
