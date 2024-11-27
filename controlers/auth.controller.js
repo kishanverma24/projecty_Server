@@ -27,7 +27,7 @@ export const login = async (req, res, next) => {
           userId: user._id,
           token: "projectykishan",
         }).save();
-        const url = `${process.env.BASE_URL}user/email/${user.id}/verify/${token1.token}`;
+        const url = `${process.env.BASE_URL}/user/email/${user.id}/verify/${token1.token}`;
         await sendEmail(user.email, "Verify Email for Projecty Web App", url);
       }
 
