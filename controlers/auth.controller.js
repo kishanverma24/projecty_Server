@@ -1,17 +1,18 @@
 import { User } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { Token } from "../models/token.model.js";
+import { sendEmail } from "./../utils/sendEmail.js";
 
 // User Login
 export const login = async (req, res, next) => {
   try {
-    // console.log(req.body);
-
     const user = await User.findOne({ userName: req.body.userName });
 
     if (!user) return res.json({ success: false, message: "User not found!" });
 
-    const isCorrect = bcrypt.compareSync(req.body.password, user.password); // it will give true if correct and false if not correct
+    const isCorrect = bcrypt.compareSync(req.body.password, user.password);
+
     if (!isCorrect)
       return res
         .json({
@@ -19,7 +20,22 @@ export const login = async (req, res, next) => {
           message: "Wrong password or username!",
         })
         .status(400);
+    if (!user.emailVerified) {
+      let token1 = await Token.findOne({ userId: user._id });
+      if (!token1) {
+        token1 = await new Token({
+          userId: user._id,
+          token: "projectykishan",
+        }).save();
+        const url = `${process.env.BASE_URL}user/email/${user.id}/verify/${token1.token}`;
+        await sendEmail(user.email, "Verify Email for Projecty Web App", url);
+      }
 
+      return res.status(400).send({
+        success: false,
+        message: "An Email sent to your account please verify!",
+      });
+    }
     const token = jwt.sign(
       {
         id: user._id,
@@ -39,6 +55,28 @@ export const login = async (req, res, next) => {
   }
 };
 
+// email verification
+export const verifyEmail = async (req, res) => {
+  try {
+    const user = await User.findOne({ _id: req.params.id });
+    if (!user) return res.status(400).send({ message: "Invalid link" });
+
+    const token = await Token.findOne({
+      userId: user._id,
+      token: req.params.token,
+    });
+    if (!token) return res.status(400).send({ message: "Invalid link" });
+
+    await User.updateOne({ _id: user._id, verified: true });
+    await token.remove();
+
+    res
+      .status(200)
+      .send({ success: true, message: "Email verified successfully" });
+  } catch (error) {
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+};
 // User Logout
 export const logout = async (req, res) => {
   // console.log(req.method);

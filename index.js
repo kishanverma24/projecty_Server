@@ -34,15 +34,9 @@ app.options("*", (req, res) => {
     "Access-Control-Allow-Headers",
     "Content-Type, Authorization, token"
   );
-  res.sendStatus(200); // Indicate successful preflight handling
+  res.sendStatus(200);
 });
 
-// Hardcoded MongoDB connection URI
-// const uri =
-//   "mongodb+srv://mrkishan9151:<your_actual_password>@cluster0.q00hg.mongodb.net/projecty?retryWrites=true&w=majority";
-
-// MongoDB connection using Mongoose
-// mongoose.set("strictQuery", true);
 const connect = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URL);
