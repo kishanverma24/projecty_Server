@@ -83,6 +83,8 @@ export const updateUserByUserId = async (req, res) => {
       new: true,
       runValidators: true,
     });
+    
+    
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -94,7 +96,7 @@ export const updateUserByUserId = async (req, res) => {
   } catch (error) {
     res
       .status(400)
-      .json({ message: "Failed to update user", error: error.message });
+      .json({success:false, message: "Failed to update user", error: error.message });
   }
 };
 
