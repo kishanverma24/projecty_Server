@@ -58,25 +58,33 @@ export const login = async (req, res, next) => {
 // email verification
 export const verifyEmail = async (req, res) => {
   try {
+    // Step 1: Find the user based on the ID
     const user = await User.findOne({ _id: req.params.id });
     if (!user) return res.status(400).send({ message: "Invalid link" });
 
+    // Step 2: Find the token associated with the user
     const token = await Token.findOne({
       userId: user._id,
       token: req.params.token,
     });
     if (!token) return res.status(400).send({ message: "Invalid link" });
 
-    await User.updateOne({ _id: user._id, verified: true });
-    await token.remove();
+    // Step 3: Update the user to set the verified flag to true
+    await User.updateOne({ _id: user._id }, { emailVerified: true });
 
+    // Step 4: Remove the token from the database
+    await token.deleteOne(); // Changed from token.remove() to token.deleteOne()
+
+    // Step 5: Respond with success
     res
       .status(200)
       .send({ success: true, message: "Email verified successfully" });
   } catch (error) {
+    // Step 6: Handle unexpected errors
     res.status(500).send({ message: "Internal Server Error" });
   }
 };
+
 // User Logout
 export const logout = async (req, res) => {
   // console.log(req.method);
