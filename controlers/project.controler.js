@@ -1,21 +1,30 @@
 import { Project } from "../models/project.model.js";
 import { User } from "../models/user.model.js";
-import createError from './../utils/createError';
 // CREATE a new project
 export const createProject = async (req, res) => {
   try {
     const user = await User.findById(req.userId);
 
-    if (!user) return next(createError(404, "User not found!"));
+    if (!user) {
+      return res.json({ success: false, message: "User not Found!" });
+    }
     const project = new Project({ ...req.body, userName: user.userName });
     await project.save();
     res
       .status(201)
-      .json({ message: "Project created successfully", newProject: project });
+      .json({
+        success: true,
+        message: "Project created successfully",
+        newProject: project,
+      });
   } catch (error) {
     res
       .status(400)
-      .json({ message: "Failed to create project", error: error.message });
+      .json({
+        success: false,
+        message: "Failed to create project",
+        error: error.message,
+      });
   }
 };
 
@@ -23,11 +32,15 @@ export const createProject = async (req, res) => {
 export const getAllProjects = async (req, res) => {
   try {
     const projects = await Project.find();
-    res.status(200).json({ projects: projects });
+    res.status(200).json({ success: true, projects: projects });
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Failed to fetch projects", error: error.message });
+      .json({
+        success: false,
+        message: "Failed to fetch projects",
+        error: error.message,
+      });
   }
 };
 // GET All Projects of usernaname Profile
@@ -74,13 +87,19 @@ export const getProjectByProjectId = async (req, res) => {
     const { projectid } = req.params;
     const project = await Project.findById(projectid);
     if (!project) {
-      return res.status(404).json({ message: "Project not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Project not found" });
     }
     res.status(200).json(project);
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Failed to fetch project", error: error.message });
+      .json({
+        success: false,
+        message: "Failed to fetch project",
+        error: error.message,
+      });
   }
 };
 // GET Single Project by ProjectTitle
@@ -89,13 +108,19 @@ export const getProjectByProjectTitle = async (req, res) => {
     const { title } = req.params;
     const searchedProject = await Project.find({ title: title });
     if (!searchedProject) {
-      return res.status(404).json({ message: "Project not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Project not found" });
     }
-    res.status(200).json(searchedProject);
+    res.status(200).json({ success: true, searchedProject: searchedProject });
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Failed to fetch project", error: error.message });
+      .json({
+        success: false,
+        message: "Failed to fetch project",
+        error: error.message,
+      });
   }
 };
 
@@ -106,9 +131,15 @@ export const updateProjectByProjectId = async (req, res) => {
     const user = await User.findById(req.userId);
     const project = await Project.findById(projectid);
 
-    if (!user) return next(createError(404, "User not found!"));
-    if (!(user.userName == project.userName))
-      return next(createError(404, "Not authenticated to update!"));
+    if (!user) {
+      return res.json({ success: false, message: "User not Found!" });
+    }
+    if (!(user.userName == project.userName)) {
+      return res.json({
+        success: false,
+        message: "Not authenticated to Update",
+      });
+    }
     const updatedProject = await Project.findByIdAndUpdate(
       projectid,
       req.body,
@@ -118,15 +149,25 @@ export const updateProjectByProjectId = async (req, res) => {
       }
     );
     if (!updatedProject) {
-      return res.status(404).json({ message: "Project not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Project not found" });
     }
     res
       .status(200)
-      .json({ message: "Project updated successfully", updatedProject });
+      .json({
+        success: true,
+        message: "Project updated successfully",
+        updatedProject,
+      });
   } catch (error) {
     res
       .status(400)
-      .json({ message: "Failed to update project", error: error.message });
+      .json({
+        success: false,
+        message: "Failed to update project",
+        error: error.message,
+      });
   }
 };
 
@@ -137,17 +178,29 @@ export const deleteProjectById = async (req, res) => {
     const user = await User.findById(req.userId);
     const project = await Project.findById(projectid);
 
-    if (!user) return next(createError(404, "User not found!"));
-    if (!(user.userName == project.userName))
-      return next(createError(404, "Not authenticated to delete!"));
+    if (!user) return res.json({ success: false, message: "User not Found!" });
+    if (!(user.userName == project.userName)) {
+      return res.json({
+        success: false,
+        message: "Not authenticated to delete!",
+      });
+    }
     const deletedProject = await Project.findByIdAndDelete(projectid);
     if (!deletedProject) {
-      return res.status(404).json({ message: "Project not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Project not found" });
     }
-    res.status(200).json({ message: "Project deleted successfully" });
+    res
+      .status(200)
+      .json({ success: true, message: "Project deleted successfully" });
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Failed to delete project", error: error.message });
+      .json({
+        success: false,
+        message: "Failed to delete project",
+        error: error.message,
+      });
   }
 };

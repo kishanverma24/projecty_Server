@@ -4,7 +4,6 @@ import bcrypt from "bcrypt";
 // New User Registration
 export const register = async (req, res, next) => {
   try {
-
     // Validate required fields
     if (
       !req.body.userName ||
@@ -77,14 +76,17 @@ export const getUserByUserName = async (req, res) => {
 export const updateUserByUserId = async (req, res) => {
   try {
     const { userid } = req.params;
-    if (!(userid == req.userId))
-      return next(createError(404, "You are not authenticated!"));
+    if (!(userid == req.userId)) {
+      return res.json({
+        success: false,
+        message: "You are not authenticated!",
+      });
+    }
     const updatedUser = await User.findByIdAndUpdate(userid, req.body, {
       new: true,
       runValidators: true,
     });
-    
-    
+
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -94,9 +96,11 @@ export const updateUserByUserId = async (req, res) => {
       currentUser: updatedUser,
     });
   } catch (error) {
-    res
-      .status(400)
-      .json({success:false, message: "Failed to update user", error: error.message });
+    res.status(400).json({
+      success: false,
+      message: "Failed to update user",
+      error: error.message,
+    });
   }
 };
 
@@ -105,8 +109,9 @@ export const deleteUserByUserId = async (req, res) => {
   try {
     const { userid } = req.params;
 
-    if (!(userid == req.userId))
-      return next(createError(404, "User not found!"));
+    if (!(userid == req.userId)) {
+      return res.json({ success: false, message: "User not found!" });
+    }
     const deletedUser = await User.findByIdAndDelete(userid);
     if (!deletedUser) {
       return res.status(404).json({ message: "User not found" });
